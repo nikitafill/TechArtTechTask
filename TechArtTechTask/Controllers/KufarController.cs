@@ -84,12 +84,13 @@ public class KufarController : ControllerBase
         {
             var ads = await _kufarService.GetAdsInPolygon(polygonPoints);
 
-            if (ads.Count == 0)
+            var result = ads.ToString();
+
+            if (!result.Any())
             {
                 return NotFound("No ads found in the specified polygon.");
             }
-
-            return Ok(ads);
+            return Ok(result);
         }
         catch (ArgumentException ex)
         {
