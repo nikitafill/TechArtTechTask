@@ -97,4 +97,29 @@ public class KufarController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+    [HttpPost("rent-with-online-booking")]
+    public async Task<IActionResult> GetRentAdsWithOnlineBookingByDistrict([FromBody] String request)
+    {
+        if (string.IsNullOrEmpty(request))
+        {
+            return BadRequest("District is required.");
+        }
+
+        try
+        {
+            var ads = await _kufarService.GetRentAdsWithOnlineBooking(request);
+            var result = ads.ToString();
+            if (!result.Any())
+            {
+                return NotFound($"No ads found in the district {request} with online booking option.");
+            }
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
 }
