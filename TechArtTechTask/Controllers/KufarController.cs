@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
 using TechArtTechTask.Service.Interfaces;
+using TechArtTechTask.Service.Models;
 using TechArtTechTask.Service.Services;
 
 [ApiController]
@@ -10,7 +11,6 @@ public class KufarController : ControllerBase
 {
     private readonly IKufarService _kufarService;
 
-    // Заменяем конкретную реализацию на интерфейс
     public KufarController(IKufarService kufarService)
     {
         _kufarService = kufarService;
@@ -68,5 +68,32 @@ public class KufarController : ControllerBase
             });
 
         return Ok(result);
+    }
+
+    [HttpPost("ads-in-polygon")]
+    public async Task<IActionResult> GetAdsInPolygon([FromBody] PolygonPointsRequest request)
+    {
+        if (request.PolygonPoints == null || request.PolygonPoints.Count < 3)
+        {
+            return BadRequest("At least three points are required to form a polygon.");
+        }
+
+        var polygonPoints = request.PolygonPoints.Select(p => (p.Latitude, p.Longitude)).ToList();
+
+        try
+        {
+            var ads = await _kufarService.GetAdsInPolygon(polygonPoints);
+
+            if (ads.Count == 0)
+            {
+                return NotFound("No ads found in the specified polygon.");
+            }
+
+            return Ok(ads);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }
