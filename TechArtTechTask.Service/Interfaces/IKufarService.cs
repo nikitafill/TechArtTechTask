@@ -10,5 +10,8 @@ namespace TechArtTechTask.Service.Interfaces
     public interface IKufarService
     {
         Task<JArray> GetAds();
+        Task<JArray> GetAdsInPolygon(List<(double Latitude, double Longitude)> polygonPoints);
+        //Task<JArray> GetRentAdsWithOnlineBooking(string district); 
+        Task<JArray> GetRentAdsWithOnlineBooking(string district, DateTime? checkInDate, DateTime? checkOutDate);
     }
 }
